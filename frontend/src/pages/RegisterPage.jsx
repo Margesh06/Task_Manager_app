@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 
 function RegisterPage() {
@@ -45,6 +45,10 @@ function RegisterPage() {
                 />
                 <button type="submit" style={styles.button}>Register</button>
             </form>
+            <div style={styles.loginLinkContainer}>
+                <span>Already have an account? </span>
+                <Link to="/" style={styles.loginLink}>Login</Link>
+            </div>
         </div>
     );
 }
@@ -92,6 +96,15 @@ const styles = {
         color: '#fff',
         fontSize: '1rem',
         cursor: 'pointer'
+    },
+    loginLinkContainer: {
+        marginTop: '15px',
+        fontSize: '1rem',
+        color: '#555',
+    },
+    loginLink: {
+        color: '#007bff',
+        textDecoration: 'none',
     }
 };
 
