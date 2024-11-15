@@ -35,7 +35,6 @@ const login = async (req, res) => {
 const getProfile = async (req, res) => {
     try {
         const userId = req.user.userId; // This comes from the decoded JWT token (from authMiddleware)
-        console.log("mar",userId);
         const user = await User.findById(userId).select('-password'); // Fetch user without password field
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
