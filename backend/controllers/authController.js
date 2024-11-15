@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+// Register a new user
 const register = async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -14,6 +15,7 @@ const register = async (req, res) => {
     }
 };
 
+// Login a user and return a JWT token
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -29,4 +31,42 @@ const login = async (req, res) => {
     }
 };
 
-module.exports = { register, login };
+// Get user profile details (protected route)
+const getProfile = async (req, res) => {
+    try {
+        const userId = req.user.userId; // This comes from the decoded JWT token (from authMiddleware)
+        console.log("mar",userId);
+        const user = await User.findById(userId).select('-password'); // Fetch user without password field
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching profile' });
+    }
+};
+
+// Edit user profile details (protected route)
+const editProfile = async (req, res) => {
+    try {
+        const userId = req.user.userId; // This comes from the decoded JWT token (from authMiddleware)
+        const { username, email } = req.body;
+        
+        // Update the user's profile details
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { username, email },
+            { new: true, runValidators: true }
+        ).select('-password'); // Exclude password field
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json(updatedUser);
+    } catch (error) {
+        res.status(500).json({ error: 'Error updating profile' });
+    }
+};
+
+module.exports = { register, login, getProfile, editProfile };
